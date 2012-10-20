@@ -4,6 +4,8 @@ This is the publisher part of Untied. Untied is an observer pattern implementati
 
 For usage information, please visit the [Untied](http://github.com.br/redu/untied) page.
 
+[![Build Status](https://travis-ci.org/redu/untied-publisher.png)](https://travis-ci.org/redu/untied-publisher)
+
 ## Installation
 
 Add this line to your application's Gemfile:
