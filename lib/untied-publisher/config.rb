@@ -7,7 +7,7 @@ module Untied
     def self.configure(&block)
       yield(config) if block_given?
       if config.deliver_messages
-        Untied.start
+        Untied::Publisher.start
       end
     end
 
