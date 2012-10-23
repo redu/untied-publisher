@@ -11,6 +11,8 @@ module Untied
           :channel => nil,
         }.merge(opts)
 
+        Publisher.config.logger.info "Untied::Publisher: Producer intialized with options #{@opts.inspect}"
+
         @routing_key = "untied.#{@opts[:service_name]}"
 
         if !@opts[:deliver_messages]

@@ -12,12 +12,7 @@ module Untied
       AMQP::Utilities::EventLoopHelper.run do
         AMQP.start
       end
-
-      EventMachine.next_tick do
-        AMQP.channel ||= AMQP::Channel.new(AMQP.connection)
-      end
     end
-
   end
 end
 
