@@ -1,0 +1,4 @@
+# 0.0.3
+
+- ``abort_on_exception`` configuration
+- Handling AMQP configuration inside the gem
