@@ -12,7 +12,7 @@ module Untied
       # The following publisher watches the User after_create event:
       #
       #   class MyDoorkeeper
-      #     include Untied::Doorkeeper
+      #     include Untied::Publisher::Doorkeeper
       #
       #     def initialize
       #       watch User, :after_create
@@ -27,7 +27,7 @@ module Untied
       # Watches ActiveRecord lifecycle callbacks for some Class
       #
       #   class Doorkeeper
-      #     include Untied::Doorkeeper
+      #     include Untied::Publisher::Doorkeeper
       #   end
       #
       #   pub.new.watch(User, :after_create)
@@ -46,7 +46,7 @@ module Untied
       # For example, if the publisher is defined as follows:
       #
       #   class MyDoorkeeper
-      #     include Untided::Doorkeeper
+      #     include Untided::Publisher::Doorkeeper
       #
       #     def initialize
       #       watch User, :after_create
