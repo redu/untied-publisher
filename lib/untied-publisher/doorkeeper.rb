@@ -34,7 +34,8 @@ module Untied
       #   User.create # sends the user into the wire
       def watch(*args)
         entity = args.shift
-        observed << [entity, args]
+        options = args.last.is_a?(Hash) ? args.pop : {}
+        observed << [entity, args, options]
       end
 
       # Returns the list of classes watched
@@ -57,20 +58,37 @@ module Untied
       # _notify_untied__publisher_observer_for_after_create is created on User's
       # model. This method is called when the after_create callback is fired.
       def define_callbacks
-        observer = Untied::Publisher::Observer
-        observer_name = observer.name.underscore.gsub('/', '__')
-
-        observed.each do |(klass, callbacks)|
+        observed.each do |(klass, callbacks, options)|
           ActiveRecord::Callbacks::CALLBACKS.each do |callback|
-          next unless callbacks.include?(callback)
-          callback_meth = :"_notify_#{observer_name}_for_#{callback}"
-          unless klass.respond_to?(callback_meth)
-            klass.send(:define_method, callback_meth) do
-              observer.instance.send(callback, self)
-            end
-            klass.send(callback, callback_meth)
+            next unless callbacks.include?(callback)
+            setup_observer(klass, callback, options)
           end
         end
+      end
+
+      protected
+
+      def setup_observer(klass, callback, options={})
+        observer = Untied::Publisher::Observer
+        observer_name = observer.name.underscore.gsub('/', '__')
+        notifier_meth = :"_notify_#{observer_name}_for_#{callback}"
+
+        if define_notifier_method(klass, observer, callback, notifier_meth, options)
+          klass.send(callback, notifier_meth)
+        end
+
+        klass
+      end
+
+      def define_method_on(klass, method_name, &block)
+        unless klass.respond_to?(method_name)
+          klass.send(:define_method, method_name, &block)
+        end
+      end
+
+      def define_notifier_method(klass, observer, callback, method_name, options={})
+        define_method_on(klass, method_name) do
+          observer.instance.send(callback, self, options)
         end
       end
     end

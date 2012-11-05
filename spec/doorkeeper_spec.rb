@@ -8,13 +8,21 @@ module Untied
         class ::Doorkeeper
           include Untied::Publisher::Doorkeeper
         end
+
+        module SomeRepresenter; end
       end
       let(:doorkeeper) { ::Doorkeeper.new }
 
       context "#watch" do
         it "should add observed classes to observed list" do
           doorkeeper.watch(User, :after_create)
-          doorkeeper.observed.should == [[User, [:after_create]]]
+          doorkeeper.observed.should == [[User, [:after_create], {}]]
+        end
+
+        it "should accept a constant" do
+          opts = { :represent_with => SomeRepresenter }
+          doorkeeper.watch(User, :after_create, opts)
+          doorkeeper.observed.should == [[User, [:after_create], opts]]
         end
       end
 
@@ -47,6 +55,43 @@ module Untied
             respond_to(:_notify_untied__publisher__observer_for_after_update)
           Post.new.should \
             respond_to(:_notify_untied__publisher__observer_for_after_create)
+        end
+
+        context "with :represent_with option" do
+          let(:observer) do
+            observer = double('Untied::Publisher::Observer')
+            observer.stub(:name).and_return("Untied::Publisher::Observer")
+            observer.stub(:after_create)
+            observer
+          end
+          before do
+            Observer.stub(:instance).and_return(observer)
+            doorkeeper.watch(Post, :after_create, :represent_with => SomeRepresenter)
+            doorkeeper.define_callbacks
+          end
+
+          it "should extend the entity with the constant" do
+            observer.should_receive(:after_create).
+              with(an_instance_of(Post), { :represent_with => SomeRepresenter })
+            Post.create
+          end
+        end
+      end
+
+      context "Observed#_notify_untied__publisher__observer_for_[callback]" do
+        let(:observer) do
+          observer = double('Untied::Publisher::Observer')
+          observer.stub(:name).and_return("Untied::Publisher::Observer")
+        end
+        before do
+          doorkeeper.watch(User, :after_create)
+          Observer.stub(:instance).and_return(observer)
+        end
+
+        it "should invoke observer method" do
+          observer.should_receive(:after_create)
+          doorkeeper.define_callbacks
+          User.new.send(:_notify_untied__publisher__observer_for_after_create)
         end
       end
 

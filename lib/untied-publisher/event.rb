@@ -1,9 +1,9 @@
 # -*- encoding : utf-8 -*-
-require 'active_model'
+
+require 'representable/json'
 
 module Untied
   class Event
-    include ActiveModel::Serializers::JSON
     attr_accessor :name, :payload, :origin
 
     def initialize(attrs)
@@ -19,9 +19,15 @@ module Untied
       @payload = @config.delete(:payload)
       @origin = @config.delete(:origin)
     end
+  end
 
-    def attributes
-      { "name" => @name, "origin" => @origin, "payload" => @payload }
-    end
+  module EventRepresenter
+    include Representable::JSON
+
+    self.representation_wrap = true
+
+    property :name
+    property :payload
+    property :origin
   end
 end

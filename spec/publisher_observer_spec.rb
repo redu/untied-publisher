@@ -3,18 +3,16 @@ require 'spec_helper'
 
 module Untied
   module Publisher
-    describe Publisher do
+    describe Observer do
       before do
-        class MyDoorkeeper
+        class ::FooDoorkeeper
           include Untied::Publisher::Doorkeeper
-          def initialize
-            watch(User, :after_create)
-            watch(User, :after_update)
-          end
         end
-        Untied::Publisher.config.doorkeeper = MyDoorkeeper
+        Untied::Publisher.config.doorkeeper = ::FooDoorkeeper
+        module UserRepresenter
+        end
       end
-      after { Untied::Publisher.config.doorkeeper = MyDoorkeeper }
+      let(:doorkeeper) { ::FooDoorkeeper.new }
 
       context ".instance" do
         it "should raise a friendly error when no doorkeeper is defined" do
@@ -27,17 +25,19 @@ module Untied
       end
 
       context "ActiveRecord::Callbacks" do
-        it "should call the observer when the callback is fired" do
-          Observer.instance.should_receive(:after_create)
-          User.create
+        let(:user) { User.create(:name => "Guila") }
+
+        it "should proxy #produce_event" do
+          Observer.instance.should_receive(:produce_event)
+          Observer.instance.send(:after_create, user)
         end
 
-        it "should accept multiple callbacks even in different #watch" do
-          Observer.instance.should_receive(:after_create)
-          Observer.instance.should_receive(:after_update)
-
-          user = User.create(:name => "yo")
-          user.update_attributes({:name => "Ops!"})
+        context "passing :with_representer" do
+          it "should call user.extend(UserRepresenter)" do
+            user.should_receive(:extend).with(UserRepresenter)
+            Observer.instance.
+              send(:after_create, user, :with_representer => UserRepresenter)
+          end
         end
       end
 

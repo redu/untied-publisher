@@ -28,8 +28,9 @@ module Untied
         end
 
         it "should include the origin service name" do
-          Event.new(:name => :after_create, :payload => person, :origin => "core").
-            origin.should == "core"
+         e = Event.new(:name => :after_create,
+                       :payload => person, :origin => "core")
+         e.origin.should == "core"
         end
       end
 

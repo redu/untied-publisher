@@ -25,6 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "amqp"
   gem.add_runtime_dependency "configurable"
   gem.add_runtime_dependency "json"
+  gem.add_runtime_dependency "representable"
 
   if RUBY_VERSION < "1.9"
     gem.add_development_dependency "ruby-debug"

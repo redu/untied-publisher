@@ -18,7 +18,8 @@ module Untied
 
       def method_missing(name, model, *args, &block)
         if ActiveRecord::Callbacks::CALLBACKS.include?(name)
-          produce_event(name, model)
+          options = args.first.is_a?(Hash) ? args.first : {}
+          produce_event(name, model, options)
         else
           super
         end
@@ -26,9 +27,13 @@ module Untied
 
       protected
 
-      def produce_event(callback, model)
-        e = Event.new(:name => callback, :payload => model,
-                      :origin => Publisher.config.service_name)
+      def produce_event(callback, model, options={})
+        if representer = options[:with_representer]
+          model = model.extend(representer)
+        end
+        e = Event.new(:name => callback,
+                      :payload => model, :origin => Publisher.config.service_name)
+        e.extend(EventRepresenter)
         producer.publish(e)
       end
 

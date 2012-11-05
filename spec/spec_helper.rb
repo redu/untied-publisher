@@ -19,6 +19,13 @@ RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
+  config.before do
+    # Redefining models for each it
+    %w(User Post).each do |klass|
+      Object.send(:remove_const, :"#{klass}")
+      Object.const_set(klass, Class.new(ActiveRecord::Base))
+    end
+  end
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
