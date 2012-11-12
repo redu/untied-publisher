@@ -16,6 +16,8 @@ module Untied
   end
 end
 
+
+require 'untied-publisher/event_representer'
 require 'untied-publisher/event'
 require 'untied-publisher/config'
 require 'untied-publisher/doorkeeper'
