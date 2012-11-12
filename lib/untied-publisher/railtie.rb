@@ -8,7 +8,9 @@ module Untied
         config.active_record.observers ||= []
         ActiveRecord::Base.observers << Untied::Publisher::Observer
         config.active_record.observers << Untied::Publisher::Observer
-        Untied::Publisher::Observer.instance
+        unless File.basename($0) == 'rake'
+          Untied::Publisher::Observer.instance
+        end
       end
     end
   end
