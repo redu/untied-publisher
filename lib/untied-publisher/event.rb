@@ -2,7 +2,6 @@
 
 module Untied
   class Event
-    extend Untied::EventRepresenter
     attr_accessor :name, :payload, :origin
 
     def initialize(attrs)

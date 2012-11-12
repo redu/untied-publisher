@@ -33,6 +33,7 @@ module Untied
         end
         e = Event.new(:name => callback,
                       :payload => model, :origin => Publisher.config.service_name)
+        e.extend(EventRepresenter)
         producer.publish(e)
       end
 
