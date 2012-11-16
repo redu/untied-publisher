@@ -12,6 +12,10 @@ module Untied
           Untied::Publisher::Observer.instance
         end
       end
+
+      config.to_prepare do
+        Untied::Publisher.config.doorkeeper.new.define_callbacks
+      end
     end
   end
 end
