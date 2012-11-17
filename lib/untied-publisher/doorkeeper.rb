@@ -58,15 +58,21 @@ module Untied
       # _notify_untied__publisher_observer_for_after_create is created on User's
       # model. This method is called when the after_create callback is fired.
       def define_callbacks
+        logger.debug "Untied::Publisher: defining callbacks"
         observed.each do |(klass, callbacks, options)|
           ActiveRecord::Callbacks::CALLBACKS.each do |callback|
             next unless callbacks.include?(callback)
+            logger.debug "Untied::Publisher: seting up callback #{callback} for #{klass}"
             setup_observer(klass, callback, options)
           end
         end
       end
 
       protected
+
+      def logger
+        Publisher.config.logger
+      end
 
       def setup_observer(klass, callback, options={})
         observer = Untied::Publisher::Observer
