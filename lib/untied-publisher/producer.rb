@@ -4,6 +4,8 @@ require 'amqp'
 module Untied
   module Publisher
     class Producer
+      # Encapsulates both the Channel and Exchange (AMQP).
+
       def initialize(opts={})
         @opts = {
           :service_name => Publisher.config.service_name,
@@ -29,12 +31,16 @@ module Untied
         end
       end
 
+      # Publish the given event.
+      #   event: object which is going to be serialized and sent through the
+      #   wire. It should respond to #to_json.
       def publish(event)
         safe_publish(event)
       end
 
       protected
 
+      # Publishes if message delivering is enabled. Otherwise just warns.
       def safe_publish(e)
         if @opts[:deliver_messages]
           on_exchange do |exchange|
