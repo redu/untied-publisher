@@ -22,7 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rake"
 
   gem.add_runtime_dependency "activerecord"
-  gem.add_runtime_dependency "amqp", "0.9.6"
+  gem.add_runtime_dependency "amqp"
   gem.add_runtime_dependency "configurable"
   gem.add_runtime_dependency "json"
   gem.add_runtime_dependency "representable"

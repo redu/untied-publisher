@@ -9,8 +9,20 @@ module Untied
     def self.start
       Thread.abort_on_exception = false
 
-      AMQP::Utilities::EventLoopHelper.run do
+      self.run do
         AMQP.start
+      end
+    end
+
+    def self.run(&block)
+      @block = block
+      if defined?(PhusionPassenger)
+        PhusionPassenger.on_event(:starting_worker_process) do |forked|
+          EM.stop if forked && EM.reactor_running?
+          Thread.new { EM.run { @block.call } }
+        end
+      else
+        AMQP::Utilities::EventLoopHelper.run { @block.call }
       end
     end
   end

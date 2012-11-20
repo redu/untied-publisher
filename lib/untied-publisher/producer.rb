@@ -26,7 +26,6 @@ module Untied
         if AMQP.channel || @opts[:channel]
           Publisher.config.logger.info "Using defined AMQP.channel"
           @channel = AMQP.channel || @opts[:channel]
-          @exchange = @channel.topic("untied", :auto_delete => true)
         end
       end
 
@@ -38,15 +37,23 @@ module Untied
 
       def safe_publish(e)
         if @opts[:deliver_messages]
-          @exchange.publish(e.to_json, :routing_key => @routing_key) do
-            Publisher.config.logger.info \
-              "Publishing event #{e.inspect} with routing key #{@routing_key}"
+          on_exchange do |exchange|
+            exchange.publish(e.to_json, :routing_key => @routing_key) do
+              Publisher.config.logger.info \
+                "Publishing event #{e.inspect} with routing key #{@routing_key}"
+            end
           end
         else
           Publisher.config.logger.info \
             "The event #{ e.inspect} was not delivered. Try to set " + \
             "Untied::Publisher.config.deliver_messages to true"
         end
+      end
+
+      # Creates a new exchange and yields it to the block passed when it's ready
+      def on_exchange(&block)
+        return unless @channel
+        @channel.topic('untied', :auto_delete => true, &block)
       end
 
       def check_em_reactor
