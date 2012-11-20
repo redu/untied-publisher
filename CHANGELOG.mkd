@@ -1,3 +1,8 @@
+# 0.0.4
+
+- Don't relying on ActiveSupport for serializing Untied::Event
+- Fixes #1
+
 # 0.0.3
 
 - ``abort_on_exception`` configuration
