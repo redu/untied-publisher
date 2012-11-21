@@ -32,11 +32,11 @@ module Untied
           Observer.instance.send(:after_create, user)
         end
 
-        context "passing :with_representer" do
+        context "passing :represent_with" do
           it "should call user.extend(UserRepresenter)" do
             user.should_receive(:extend).with(UserRepresenter)
             Observer.instance.
-              send(:after_create, user, :with_representer => UserRepresenter)
+              send(:after_create, user, :represent_with => UserRepresenter)
           end
         end
       end

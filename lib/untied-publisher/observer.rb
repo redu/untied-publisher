@@ -28,7 +28,7 @@ module Untied
       protected
 
       def produce_event(callback, model, options={})
-        if representer = options[:with_representer]
+        if representer = options[:represent_with]
           model = model.extend(representer)
         end
         e = Event.new(:name => callback,
