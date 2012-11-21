@@ -28,12 +28,9 @@ module Untied
       protected
 
       def produce_event(callback, model, options={})
-        if representer = options[:represent_with]
-          model = model.extend(representer)
-        end
-        e = Event.new(:name => callback,
-                      :payload => model, :origin => Publisher.config.service_name)
-        e.extend(EventRepresenter)
+        e = Event.new(:name => callback, :payload => model,
+                      :origin => Publisher.config.service_name,
+                      :payload_representer => options[:represent_with])
         producer.publish(e)
       end
 

@@ -1,16 +1,21 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
+require 'representable/json'
 
 module Untied
   module Publisher
     describe Observer do
+      before(:all) do
+        module UserRepresenter
+          include Representable::JSON
+          property :name
+        end
+      end
       before do
         class ::FooDoorkeeper
           include Untied::Publisher::Doorkeeper
         end
         Untied::Publisher.config.doorkeeper = ::FooDoorkeeper
-        module UserRepresenter
-        end
       end
       let(:doorkeeper) { ::FooDoorkeeper.new }
 
@@ -33,8 +38,9 @@ module Untied
         end
 
         context "passing :represent_with" do
-          it "should call user.extend(UserRepresenter)" do
-            user.should_receive(:extend).with(UserRepresenter)
+          it "should create a new Event with :payload_representer option" do
+            Event.should_receive(:new).
+              with(hash_including(:payload_representer))
             Observer.instance.
               send(:after_create, user, :represent_with => UserRepresenter)
           end

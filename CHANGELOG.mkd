@@ -1,3 +1,5 @@
+- Refactor event and payload representer
+
 # 0.0.4
 
 - Don't relying on ActiveSupport for serializing Untied::Event
