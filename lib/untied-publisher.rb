@@ -44,11 +44,11 @@ module Untied
   end
 end
 
-
 require 'untied-publisher/event_representer'
 require 'untied-publisher/event'
-require 'untied-publisher/config'
 require 'untied-publisher/doorkeeper'
+require 'untied-publisher/default_doorkeeper'
+require 'untied-publisher/config'
 require 'untied-publisher/observer'
 require 'untied-publisher/producer'
 require 'untied-publisher/railtie' if defined?(Rails)
