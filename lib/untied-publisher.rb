@@ -25,6 +25,22 @@ module Untied
         AMQP::Utilities::EventLoopHelper.run { @block.call }
       end
     end
+
+    # Configures untied-publisher. The options are defined at
+    # lib/untied-publisher/config.rb
+    def self.configure(&block)
+      yield(config) if block_given?
+      if config.deliver_messages
+        Untied::Publisher.start
+        EventMachine.next_tick do
+          config.channel ||= AMQP::Channel.new(AMQP.connection)
+        end
+      end
+    end
+
+    def self.config
+      @config ||= Config.new
+    end
   end
 end
 

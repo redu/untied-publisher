@@ -4,27 +4,17 @@ require 'logger'
 
 module Untied
   module Publisher
-    def self.configure(&block)
-      yield(config) if block_given?
-      if config.deliver_messages
-        Untied::Publisher.start
-        EventMachine.next_tick do
-          config.channel ||= AMQP::Channel.new(AMQP.connection)
-        end
-      end
-    end
-
-    def self.config
-      @config ||= Config.new
-    end
-
     class Config
       include Configurable
 
+      # Logger used by untied. Default: STDOUT
       config :logger, Logger.new(STDOUT)
+      # Deliver the messages to AMQP broker. Default: true
       config :deliver_messages, true
-      config :service_name
-      config :doorkeeper, nil
+      # An unique identifier to the publisher. Default: untied_publisher
+      config :service_name, 'untied_publisher'
+      # Doorkeeper class name. Default: DefaultDoorkeeper
+      config :doorkeeper, Untied::Publisher::DefaultDoorkeeper
       config :channel, nil
     end
   end
