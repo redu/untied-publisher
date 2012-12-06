@@ -8,10 +8,8 @@ module Untied
         config.active_record.observers ||= []
         ActiveRecord::Base.observers << Untied::Publisher::Observer
         config.active_record.observers << Untied::Publisher::Observer
-        unless File.basename($0) == 'rake'
-          Publisher.config.logger.debug "Untied::Publisher: initializing observer"
-          Untied::Publisher::Observer.instance
-        end
+        Publisher.config.logger.debug "Untied::Publisher: initializing observer"
+        Untied::Publisher::Observer.instance
       end
 
       config.to_prepare do
