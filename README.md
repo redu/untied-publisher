@@ -2,7 +2,7 @@
 
 This is the publisher part of Untied. Untied is an observer pattern implementation to distributed systems.
 
-For usage information, please visit the [Untied](http://github.com.br/redu/untied) page.
+For usage information, please visit the [Untied](http://github.com/redu/untied) page.
 
 [![Build Status](https://travis-ci.org/redu/untied-publisher.png)](https://travis-ci.org/redu/untied-publisher)
 
