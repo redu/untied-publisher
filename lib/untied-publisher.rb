@@ -51,4 +51,6 @@ require 'untied-publisher/default_doorkeeper'
 require 'untied-publisher/config'
 require 'untied-publisher/observer'
 require 'untied-publisher/producer'
+require 'untied-publisher/amqp_producer'
+require 'untied-publisher/bunny_producer'
 require 'untied-publisher/railtie' if defined?(Rails)
