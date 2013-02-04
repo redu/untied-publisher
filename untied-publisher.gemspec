@@ -26,6 +26,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "configurable"
   gem.add_runtime_dependency "json"
   gem.add_runtime_dependency "representable"
+  gem.add_runtime_dependency "bunny", "0.9.0.pre6"
 
   if RUBY_VERSION < "1.9"
     gem.add_development_dependency "ruby-debug"
