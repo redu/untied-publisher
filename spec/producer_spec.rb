@@ -3,21 +3,25 @@ require 'spec_helper'
 
 module Untied
   module Publisher
-    describe Producer do
+    describe AMQPProducer do
       context "configuration" do
         it "should use service name configured" do
-          opts = Producer.new.instance_variable_get(:@opts)
-          opts[:service_name].should == 'core'
+          mock_reactor_and_amqp do |c|
+            opts = AMQPProducer.new.instance_variable_get(:@opts)
+            opts[:service_name].should == 'core'
+          end
         end
       end
 
       it "should initilize producer" do
-        Producer.new.should be_a Producer
+        mock_reactor_and_amqp do |c|
+          AMQPProducer.new.should be_a AMQPProducer
+        end
       end
 
       it "should raise RuntimeError when trying to run without connection" do
         expect {
-          Producer.new(:deliver_messages => true)
+          AMQPProducer.new(:deliver_messages => true)
         }.to raise_error
       end
 
@@ -25,7 +29,7 @@ module Untied
         mock_reactor_and_amqp do |c|
           EM.stub("reactor_running?" => false)
           expect {
-            Producer.new(:channel => c, :deliver_messages => true)
+            AMQPProducer.new(:channel => c, :deliver_messages => true)
           }.to raise_error
         end
       end
@@ -37,7 +41,7 @@ module Untied
 
         it "should call Channel#publish" do
           mock_reactor_and_amqp do |channel|
-            producer = Producer.new(:channel => channel, :deliver_messages => true)
+            producer = AMQPProducer.new(:channel => channel, :deliver_messages => true)
             producer.should_receive(:safe_publish).with(event)
             producer.publish(event)
           end
