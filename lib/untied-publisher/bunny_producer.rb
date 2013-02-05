@@ -8,7 +8,7 @@ module Untied
         @conn = Bunny.new
         @conn.start
         @channel = @conn.create_channel
-        @exchange = @channel.default_exchange
+        @exchange = @channel.topic('untied', :auto_delete => true)
       end
 
       # Publish the given event.
