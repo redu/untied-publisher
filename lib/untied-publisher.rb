@@ -7,11 +7,11 @@ require 'amqp/utilities/event_loop_helper'
 module Untied
   module Publisher
     def self.start
-      Thread.abort_on_exception = false
+      # Thread.abort_on_exception = false
 
-      self.run do
-        AMQP.start
-      end
+      # self.run do
+      #   AMQP.start
+      # end
     end
 
     def self.run(&block)
