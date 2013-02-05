@@ -32,9 +32,9 @@ module Untied
       yield(config) if block_given?
       if config.deliver_messages
         Untied::Publisher.start
-        EventMachine.next_tick do
-          config.channel ||= AMQP::Channel.new(AMQP.connection)
-        end
+        # EventMachine.next_tick do
+        #   config.channel ||= AMQP::Channel.new(AMQP.connection)
+        # end
       end
     end
 
