@@ -71,7 +71,7 @@ module Untied
               bind(exchange, :routing_key => "untied.core")
             subject.publish(event)
 
-            sleep(0.5)
+            sleep(1)
 
             queue.message_count.should == 1
             channel.close
