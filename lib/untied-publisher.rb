@@ -12,6 +12,7 @@ require 'untied-publisher/observer'
 require 'untied-publisher/base_producer'
 require 'untied-publisher/amqp'
 require 'untied-publisher/bunny'
+require 'untied-publisher/base'
 
 module Untied
   module Publisher
@@ -19,6 +20,9 @@ module Untied
     def self.configure(&block)
       yield(config) if block_given?
       if config.deliver_messages
+        adapter.start
+      else
+        config.adapter = :Base
         adapter.start
       end
     end

@@ -17,10 +17,11 @@ module Untied
       def publish(event)
         if deliver_messages
           safe_publish(event)
-          say "Publishing event #{event.to_json} with routing key #{routing_key}"
+          say "Publishing event with routing key #{routing_key}: #{event.to_json}"
         else
-          say "The event #{event.to_json} was not delivered. Try to set " + \
-              "Untied::Publisher.config.deliver_messages to true"
+          say "Event produced but not delivered. If you want to deliver it " + \
+              "try to set Untied::Publisher.config.deliver_messages to true. " + \
+              "Event: #{event.to_json}"
         end
       end
 
