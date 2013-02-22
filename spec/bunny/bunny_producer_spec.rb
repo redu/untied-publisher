@@ -25,6 +25,7 @@ module Untied
           end
           after do
             connection.close
+            Publisher.config.deliver_messages = false
           end
 
           it "should route the message correctly" do
@@ -32,7 +33,7 @@ module Untied
               bind(exchange, :routing_key => "untied.core")
             subject.publish(event)
 
-            sleep(1)
+            sleep(0.5)
 
             queue.message_count.should == 1
             channel.close

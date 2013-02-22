@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'amqp'
 
 module Untied
   module Publisher
