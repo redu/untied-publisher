@@ -1,4 +1,7 @@
+# 0.0.6
+
 - Refactor event and payload representer
+- Implements sync producer (and makes it possible to choose through config)
 
 # 0.0.4
 
