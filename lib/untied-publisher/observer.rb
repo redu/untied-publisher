@@ -35,7 +35,7 @@ module Untied
       end
 
       def producer
-        BunnyProducer.new
+        Publisher.adapter.producer.new
       end
 
       def publisher

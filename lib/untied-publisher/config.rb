@@ -15,7 +15,8 @@ module Untied
       config :service_name, 'untied_publisher'
       # Doorkeeper class name. Default: DefaultDoorkeeper
       config :doorkeeper, Untied::Publisher::DefaultDoorkeeper
-      config :channel, nil
+      # RabbitMQ adapter
+      config :adapter, :Bunny
     end
   end
 end
