@@ -2,47 +2,6 @@ require "untied-publisher/version"
 
 require 'rubygems'
 require 'bundler/setup'
-require 'amqp/utilities/event_loop_helper'
-
-module Untied
-  module Publisher
-    def self.start
-      # Thread.abort_on_exception = false
-
-      # self.run do
-      #   AMQP.start
-      # end
-    end
-
-    def self.run(&block)
-      @block = block
-      if defined?(PhusionPassenger)
-        PhusionPassenger.on_event(:starting_worker_process) do |forked|
-          EM.stop if forked && EM.reactor_running?
-          Thread.new { EM.run { @block.call } }
-        end
-      else
-        AMQP::Utilities::EventLoopHelper.run { @block.call }
-      end
-    end
-
-    # Configures untied-publisher. The options are defined at
-    # lib/untied-publisher/config.rb
-    def self.configure(&block)
-      yield(config) if block_given?
-      if config.deliver_messages
-        Untied::Publisher.start
-        # EventMachine.next_tick do
-        #   config.channel ||= AMQP::Channel.new(AMQP.connection)
-        # end
-      end
-    end
-
-    def self.config
-      @config ||= Config.new
-    end
-  end
-end
 
 require 'untied-publisher/event_representer'
 require 'untied-publisher/event'
@@ -51,6 +10,45 @@ require 'untied-publisher/default_doorkeeper'
 require 'untied-publisher/config'
 require 'untied-publisher/observer'
 require 'untied-publisher/base_producer'
-require 'untied-publisher/amqp/producer'
-require 'untied-publisher/bunny/producer'
+require 'untied-publisher/amqp'
+require 'untied-publisher/bunny'
+
+module Untied
+  module Publisher
+    # Configures untied-publisher.
+    def self.configure(&block)
+      yield(config) if block_given?
+      if config.deliver_messages
+        adapter.start
+      end
+    end
+
+    def self.config
+      @config ||= Config.new
+    end
+
+    def self.adapter
+      producer_booter = "Untied::Publisher::#{self.config.adapter}"
+
+      @adapter ||= begin
+        begin
+          constantize(producer_booter)
+        rescue NameError
+          config.logger.info "#{producer_booter} is not defined. Falling back " +\
+            "to Untied::Publisher::Bunny"
+          Untied::Publisher::Bunny
+        end
+     end
+    end
+
+    # Transforms string into constant
+    def self.constantize(class_name)
+      unless /\A(?:::)?([A-Z]\w*(?:::[A-Z]\w*)*)\z/ =~ class_name
+        raise NameError, "#{class_name.inspect} is not a valid constant name!"
+      end
+
+      Object.module_eval("::#{$1}", __FILE__, __LINE__)
+    end
+  end
+end
 require 'untied-publisher/railtie' if defined?(Rails)
