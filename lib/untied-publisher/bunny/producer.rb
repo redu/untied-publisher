@@ -7,14 +7,23 @@ module Untied
         def initialize(opts={})
           super
 
-          connection.start
+          begin
+            connection.start
+          rescue ::Bunny::TCPConnectionFailed => e
+            say "Can't connect to RabbitMQ: #{e.message}"
+          end
         end
 
         # Publish the given event.
         #   event: object which is going to be serialized and sent through the
         #   wire. It should respond to #to_json.
         def safe_publish(event)
-          exchange.publish(event.to_json, :routing_key => routing_key)
+          if connection.status == :open
+            exchange.publish(event.to_json, :routing_key => routing_key)
+          else
+            say "Event not sent. Connection status is #{connection.status}: " + \
+                "#{event.to_json}"
+          end
         end
 
         protected

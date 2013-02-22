@@ -11,6 +11,44 @@ module Untied
           end
         end
 
+        context "failing connection" do
+          let(:bunny) do
+            bunny = double('Bunny')
+          end
+          before do
+            bunny.stub(:start).
+              and_raise(::Bunny::TCPConnectionFailed.new(nil, "host", "port"))
+
+            Producer.any_instance.stub(:connection).and_return(bunny)
+          end
+          let(:logger) { Publisher.config.logger }
+
+          context ".new" do
+
+            it "should log when connection is refused" do
+              Producer.any_instance.stub(:connection).and_return(bunny)
+              expect { Producer.new }.to_not raise_error
+            end
+
+            it "should log properly" do
+              logger.should_receive(:info).with(/Channel was not setted up/)
+              logger.should_receive(:info).with(/Producer intialized/)
+              logger.should_receive(:info).with(/Can't connect to RabbitMQ/)
+
+              Producer.new
+            end
+          end
+
+          context "#publish" do
+            it "should log properly" do
+              subject = Producer.new
+              bunny.stub(:status).and_return(:closed)
+              logger.should_receive(:info).with(/Event not sent/)
+              subject.safe_publish({})
+            end
+          end
+        end
+
         context "#publish" do
           let(:connection) { ::Bunny.new }
           let(:channel) { connection.create_channel }

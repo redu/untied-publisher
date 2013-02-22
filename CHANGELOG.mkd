@@ -2,6 +2,7 @@
 
 - Refactor event and payload representer
 - Implements sync producer (and makes it possible to choose through config)
+- Improve failsafeness (issue #5 and #6)
 
 # 0.0.4
 
