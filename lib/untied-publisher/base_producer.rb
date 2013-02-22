@@ -4,7 +4,7 @@ require 'amqp'
 module Untied
   module Publisher
     # Generic class to provide message publishing.
-    class Producer
+    class BaseProducer
       attr_reader :routing_key, :service_name, :deliver_messages
 
       def initialize(opts={})

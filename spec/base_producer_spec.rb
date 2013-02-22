@@ -2,18 +2,18 @@ require 'spec_helper'
 
 module Untied
   module Publisher
-    describe Producer do
+    describe BaseProducer do
       context ".new" do
         it "should raise exception when there is no service_name" do
           Publisher.config.stub(:service_name).and_return(nil)
           expect {
-            Producer.new
+            BaseProducer.new
           }.to raise_error(ArgumentError, /you should inform service_name/)
         end
 
         %w(routing_key service_name deliver_messages).each do |attr|
           it "should have #{attr} attr reader" do
-            Producer.new.should respond_to(attr)
+            BaseProducer.new.should respond_to(attr)
           end
         end
 
@@ -22,7 +22,7 @@ module Untied
             with(/Producer intialized with options/)
           Publisher.config.logger.should_receive(:info).
             with(/Channel was not/)
-          Producer.new(:deliver_messages => false)
+          BaseProducer.new(:deliver_messages => false)
         end
       end
 
